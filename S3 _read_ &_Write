@@ -1,0 +1,46 @@
+-------------------- Read the file from S3 into Databricks-----------------------------------------------------------
+from pyspark.sql import SparkSession
+
+# Create a SparkSession
+spark = SparkSession.builder.appName("Suresh").getOrCreate()
+
+# Set the AWS access key and secret key
+spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "AKIAVDKIIDQNFIEJUDMQ")
+spark._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "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")
+
+# Specify the S3 path for the Parquet file
+s3_path = "s3a://evaraa/Movie/part-00000-tid-4985387686335146811-3c003038-3852-4165-b6f1-05de11cfa3da-5-1-c000.snappy.parquet"
+
+# Read the Parquet file into a DataFrame
+df1 = spark.read.parquet(s3_path)
+
+# Show the DataFrame
+df1.show()
+
+# Stop the SparkSession
+spark.stop()
+
+
+
+-----------------------------------------Write the file into S3 folder 📂 ---------------------------------------------------------------------
+
+from pyspark.sql import SparkSession
+
+# Create a SparkSession
+spark = SparkSession.builder.appName("SaveToS3").getOrCreate()
+
+# Set the AWS access key and secret key
+spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "AKIAVDKIIDQNFIEJUDMQ")
+spark._jsc.hadoopConfiguration().set("fs.s3a.secret.key", "RkIRt/W7ruaTj6VA13acYwjZf5SbJRWk9DPY9Cwg")
+
+# Specify the S3 path where you want to store the table
+s3_output_path = "s3a://evaraa/Movie"
+
+# Read the table (replace "YourTableName" with the actual table name)
+table_df = spark.read.table("Movie")
+
+# Save the table to S3
+table_df.write.parquet(s3_output_path)  # You can choose other formats like 'csv', 'json', etc.
+
+# Stop the SparkSession
+spark.stop()
